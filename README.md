@@ -7,7 +7,7 @@ Command line tools for decrypting Pluralsight videos downloaded from the Plurals
 - This tools requires .Net Core 3.1
 
 ## Installing
-- Download the latest binary from [here](https://github.com/Damurka/PluralVideos/releases).
+- Download the latest binary from [here](https://github.com/dodoma700/PluralVideos/releases).
 
 ## Usage
 
