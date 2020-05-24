@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DownloadVideos": {
+      "commandName": "Project",
+      "commandLineArgs": "--out \"C:\\Pluralsight\" --course \"pci-dss-securing-data-systems-apps\" "
+    }
+  }
+}

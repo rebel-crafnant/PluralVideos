@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ApplicationIcon>34775011-89bb46c2-f609-11e7-8bd1-d7a70d2277fd.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
+    <PackageReference Include="Refit" Version="5.1.67" />
+  </ItemGroup>
+
+</Project>
