@@ -27,6 +27,13 @@ namespace PluralVideos.Download.Helpers
             return JsonSerializer.Deserialize<User>(json, options);
         }
 
+        public static void DeleteUser()
+        {
+            var file = new FileInfo(UserPath);
+            if (file.Exists)
+                file.Delete();
+        }
+
         public static void WriteUser(User user)
         {
             using var fs = CreateFile(UserPath);

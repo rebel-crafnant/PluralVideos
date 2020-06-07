@@ -6,7 +6,7 @@ namespace PluralVideos.Download.Services
 {
     public class BaseService
     {
-        protected async Task<ServiceResponse<T>> Process<T>(Func<Task<T>> fun) where T : class, new()
+        protected async Task<ServiceResponse<T>> Process<T>(Func<Task<T>> fun)
         {
             var response = new ServiceResponse<T>();
             try

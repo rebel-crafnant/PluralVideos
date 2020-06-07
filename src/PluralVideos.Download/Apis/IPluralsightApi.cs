@@ -24,5 +24,8 @@ namespace PluralVideos.Download.Apis
 
         [Post("/user/authorization/{deviceId}")]
         Task<User> Authorize(string deviceId, [Body] DeviceInfo deviceInfo);
+
+        [Delete("/user/device/{deviceId}")]
+        Task<string> Logout(string deviceId);
     }
 }

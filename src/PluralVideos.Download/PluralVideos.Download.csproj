@@ -9,15 +9,24 @@
     <Authors>Dodoma</Authors>
     <Product>PluralVideos.Download</Product>
     <Description>Downloads courses from Pluralsight</Description>
-    <Copyright>MIT</Copyright>
     <PackageReleaseNotes>You can login from the app. Pluralsight app is not required</PackageReleaseNotes>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <NoWin32Manifest>true</NoWin32Manifest>
+    <PackageIcon>Icon.ico</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="Refit" Version="5.1.67" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Icon.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

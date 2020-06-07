@@ -73,6 +73,20 @@ namespace PluralVideos.Download.Services
             return response.Data.Status == "Valid";
         }
 
+        public async Task<bool> Logout()
+        {
+            var user = FileHelper.ReadUser();
+            if (user == null)
+                return false;
+
+            RequiresAuthentication = true;
+            var response = await Process(async () => await api.Logout(user.DeviceInfo.DeviceId));
+            if (!response.IsSuccess)
+                throw new Exception("There was an error logging out.");
+            FileHelper.DeleteUser();
+            return true;
+        }
+
         public async Task<User> AuthorizeAsync(User user)
         {
             RequiresAuthentication = false;

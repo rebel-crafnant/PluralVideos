@@ -27,6 +27,17 @@ namespace PluralVideos.Download
 
             if (options.Login)
                 await Login();
+
+            if (options.Logout)
+            {
+                if (await services.Logout())
+                {
+                    Utils.WriteGreenText("Logged out successfully");
+                    return;
+                }
+
+                Utils.WriteYellowText("You are not logged in.");
+            }
         }
 
         public async Task Login()
