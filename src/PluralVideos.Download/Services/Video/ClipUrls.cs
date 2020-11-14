@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace PluralVideos.Download.Entities
+namespace PluralVideos.Download.Services.Video
 {
     public class ClipUrls
     {

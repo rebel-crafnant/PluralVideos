@@ -1,5 +1,4 @@
-﻿using PluralVideos.Download.Entities;
-using PluralVideos.Download.Helpers;
+﻿using PluralVideos.Download.Helpers;
 using PluralVideos.Download.Options;
 using PluralVideos.Download.Services;
 using System;
@@ -12,12 +11,11 @@ namespace PluralVideos.Download
     {
         private readonly AuthenticatorOptions options;
 
-        private readonly PluralsightService services;
+        private readonly PluralSightApi api = new PluralSightApi(15);
 
         public Authenticator(AuthenticatorOptions options)
         {
             this.options = options;
-            services = new PluralsightService();
         }
 
         public async Task Run()
@@ -30,13 +28,11 @@ namespace PluralVideos.Download
 
             if (options.Logout)
             {
-                if (await services.Logout())
-                {
+                var response = await api.Auth.Logout();
+                if (response.Success)
                     Utils.WriteGreenText("Logged out successfully");
-                    return;
-                }
-
-                Utils.WriteYellowText("You are not logged in.");
+                else
+                    Utils.WriteRedText($"Could not log out . Error: {response.Error.Message}");
             }
         }
 
@@ -45,28 +41,22 @@ namespace PluralVideos.Download
             var user = FileHelper.ReadUser();
             if (user != null)
             {
-                Utils.WriteGreenText("You are already logged in", false);
-                if (user.Expiration <= DateTimeOffset.UtcNow.AddDays(1.0))
-                {
-                    await services.AuthorizeAsync(user);
-                    Utils.WriteGreenText("  ... Refreshed.");
-                }
-                Utils.WriteGreenText(".");
+                Utils.WriteGreenText("You are already logged in.");
                 return;
             }
 
-            var register = await services.AuthenticateAsync();
-            if (register == null)
+            var authResponse = await api.Auth.Autheticate();
+            if (!authResponse.Success)
             {
-                Utils.WriteRedText("Could not authenticate this device.Please try again.");
+                Utils.WriteRedText($"Could not register the device. Error: {authResponse.Error.Message}");
                 return;
             }
 
+            var register = authResponse.Data;
             Utils.WriteYellowText($"Visit {register.AuthDeviceUrl}");
             Utils.WriteYellowText($"Enter Pin {register.Pin}");
             Utils.WriteYellowText($"Expires at: {register.ValidUntil:HH:mm} UTC");
 
-            var info = new DeviceInfo { DeviceId = register.DeviceId, RefreshToken = register.RefreshToken };
             while (true)
             {
                 Thread.Sleep(15000);
@@ -77,15 +67,21 @@ namespace PluralVideos.Download
                     break;
                 }
 
-                if (await services.DeviceStatus(info.DeviceId))
+                var statusResponse = await api.Auth.DeviceStatus();
+                if (statusResponse.Success && statusResponse.Data.Status == "Valid")
                 {
-                    await services.AuthorizeAsync(new User { DeviceInfo = info });
-                    Utils.WriteGreenText("You have successfully logged in");
+                    var authorizeResponse = await api.Auth.GetAccessToken();
+                    if (!authorizeResponse.Success)
+                        Utils.WriteRedText($"Could not get access token. Error: {authorizeResponse.Error.Message}");
+                    else
+                        Utils.WriteGreenText("You have successfully logged in");
 
                     break;
                 }
-
-
+                else if (!statusResponse.Success)
+                {
+                    Utils.WriteRedText($"Could not get device status. Error: {statusResponse.Error.Message}");
+                }
             }
         }
     }

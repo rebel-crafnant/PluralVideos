@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace PluralVideos.Download.Entities
+namespace PluralVideos.Download.Services.Auth
 {
     public class Register
     {

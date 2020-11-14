@@ -1,4 +1,4 @@
-﻿namespace PluralVideos.Download.Entities
+﻿namespace PluralVideos.Download.Services.Auth
 {
     public class DeviceInfo
     {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PluralVideos.Download.Entities
+namespace PluralVideos.Download.Services.Video
 {
     public class Clip
     {

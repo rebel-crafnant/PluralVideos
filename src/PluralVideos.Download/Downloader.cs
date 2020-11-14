@@ -1,8 +1,8 @@
-﻿using PluralVideos.Download.Entities;
-using PluralVideos.Download.Extensions;
+﻿using PluralVideos.Download.Extensions;
 using PluralVideos.Download.Helpers;
 using PluralVideos.Download.Options;
 using PluralVideos.Download.Services;
+using PluralVideos.Download.Services.Video;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,15 +13,12 @@ namespace PluralVideos.Download
     {
         private readonly DownloaderOptions options;
 
-        private readonly PluralsightService pluralsightService;
-
-        private readonly DownloadClient downloadClient;
+        private readonly PluralSightApi api;
 
         public Downloader(DownloaderOptions options)
         {
             this.options = options;
-            pluralsightService = new PluralsightService();
-            downloadClient = new DownloadClient(options.Timeout);
+            api = new PluralSightApi(options.Timeout);
         }
 
         public async Task Download()
@@ -76,17 +73,18 @@ namespace PluralVideos.Download
 
         private async Task<Course> GetCourseAsync(string courseName, bool list)
         {
-            var course = await pluralsightService.GetCourseAsync(courseName);
-            if (course == null)
-                throw new Exception("The course was not found.");
+            var courseResponse = await api.Video.GetCourse(courseName);
+            if (!courseResponse.Success)
+                throw new Exception($"Course was not found. Error: {courseResponse.ResponseBody}");
 
-            var hasAccess = await pluralsightService.HasCourseAccess(course.Header.Id);
-            if (!hasAccess && !list)
+            var hasAccess = await api.Video.HasCourseAccess(courseResponse.Data.Header.Id);
+            var noAccess = (!hasAccess.HasValue || !hasAccess.Value);
+            if (noAccess  && !list)
                 throw new Exception("You do not have permission to download this course");
-            else if (!hasAccess && list)
+            else if (!noAccess&& list)
                 Utils.WriteRedText("Warning: You do not have permission to download this course");
 
-            return course;
+            return courseResponse.Data;
         }
 
         private async Task GetModuleAsync(Header course, Module module, int index, bool list)
@@ -113,29 +111,23 @@ namespace PluralVideos.Download
                 return;
             }
 
-            var response = await pluralsightService.GetClipUrlsAsync(course.Id, clip.Id);
-            if (!response.IsSuccess)
+            var response = await api.Video.GetClipUrls(course.Id, clip.Id, clip.SupportsWidescreen);
+            if (!response.Success)
             {
-                Utils.WriteRedText($"\t\t---Error retrieving clip '{clip.Title}'");
+                Utils.WriteRedText($"\n\t\t---Error retrieving clip '{clip.Title}'. Message: {response.Error.Message}");
                 return;
             }
 
             foreach (var (item, index) in response.Data.RankedOptions.WithIndex())
             {
-                try
+                var file = await api.Download.Download(item.Url, options.OutputPath, course.Title, moduleId, moduleTitle, clip);
+                if (file.Success)
                 {
-                    var filePath = FileHelper.GetVideoPath(options.OutputPath, course.Title, moduleId, moduleTitle, clip);
-                    if (!await downloadClient.Download(item, filePath))
-                    {
-                        Utils.WriteRedText($"\t\t---Invalid link: Cdn: {item.Cdn} with Url: {item.Url}");
-                        continue;
-                    }
-
                     var padding = index != 0 ? "\t\t  " : "  ";
                     Utils.WriteBlueText($"{padding}--  completed");
                     break;
                 }
-                catch (Exception)
+                else
                 {
                     var newLine = index == 0 ? "\n" : "";
 

@@ -1,4 +1,4 @@
-﻿using PluralVideos.Download.Entities;
+﻿using PluralVideos.Download.Services.Video;
 using System.Collections.Generic;
 using System.Linq;
 

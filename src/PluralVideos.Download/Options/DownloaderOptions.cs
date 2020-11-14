@@ -20,8 +20,8 @@ namespace PluralVideos.Download.Options
         [Option("list", HelpText = "List course without downloading")]
         public bool ListCourse { get; set; }
 
-        [Option("timeout", Default = 60, HelpText = "Timeout period for video download in seconds")]
-        public int Timeout { get; set; } = 15;
+        [Option("timeout", Default = 15, HelpText = "Timeout period for video download in seconds")]
+        public int Timeout { get; set; }
 
         public bool ListClip
             => !string.IsNullOrEmpty(ClipId) && ListCourse;

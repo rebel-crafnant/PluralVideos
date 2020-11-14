@@ -1,4 +1,5 @@
-﻿using PluralVideos.Download.Entities;
+﻿using PluralVideos.Download.Services.Auth;
+using PluralVideos.Download.Services.Video;
 using System;
 using System.IO;
 using System.Text;
