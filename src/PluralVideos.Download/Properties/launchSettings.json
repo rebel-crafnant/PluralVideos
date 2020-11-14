@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PluralVideos.Download": {
+      "commandName": "Project",
+      "commandLineArgs": "download --out \"C:\\Users\\Murage\\Desktop\\Pluralsight\" --course typescript --list"
+    }
+  }
+}

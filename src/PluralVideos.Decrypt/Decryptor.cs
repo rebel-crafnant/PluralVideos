@@ -5,6 +5,7 @@ using PluralVideos.Decrypt.Helpers;
 using PluralVideos.Decrypt.Entities;
 using PluralVideos.Decrypt.Encryption;
 using PluralVideos.Decrypt.Options;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace PluralVideos.Decrypt
 {
@@ -61,8 +62,8 @@ namespace PluralVideos.Decrypt
             else
             {
                 using var fs = FileHelper.CreateVideo(options.OutputPath, courseTitle, module, clip);
-                using var cache = new VirtualFileCache(file.FullName);
-                cache.CopyTo(fs);
+                var stream = new VirtualFileStream(file.FullName);
+                stream.Read(fs);
 
                 if (options.CreateTranscript)
                     WriteTranscriptFile(clip, module, courseTitle);

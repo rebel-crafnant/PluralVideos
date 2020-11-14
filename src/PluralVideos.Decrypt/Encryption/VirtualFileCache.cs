@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace PluralVideos.Decrypt.Encryption
 {
-    class VirtualFileCache : IDisposable
+    public class VirtualFileCache : IDisposable
     {
         private readonly IPsStream encryptedVideoFile;
 
@@ -19,26 +20,16 @@ namespace PluralVideos.Decrypt.Encryption
             encryptedVideoFile = stream;
         }
 
-        public int Read(byte[] pv, int offset, int count)
+        public void Read(byte[] pv, int offset, int count, IntPtr pcbRead)
         {
             if (Length == 0L)
-                return 0;
+                return;
             encryptedVideoFile.Seek(offset, SeekOrigin.Begin);
             int length = encryptedVideoFile.Read(pv, 0, count);
-            VideoEncryption.DecryptBuffer(pv, length, offset);
-            return length;
-        }
-
-        public void CopyTo(Stream stream)
-        {
-            var buffer = new byte[0x2000];
-            var offset = 0;
-            int read;
-            while ((read = Read(buffer, offset, buffer.Length)) != 0)
-            {
-                offset += read;
-                stream.Write(buffer, 0, read);
-            }
+            VideoEncryption.DecryptBuffer(pv, length, (long)offset);
+            if (!(IntPtr.Zero != pcbRead))
+                return;
+            Marshal.WriteIntPtr(pcbRead, new IntPtr(length));
         }
 
         public void Dispose()
