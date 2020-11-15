@@ -13,60 +13,50 @@ namespace PluralVideos.Download
     {
         private readonly DownloaderOptions options;
 
+        private readonly TaskQueue queue;
+
         private readonly PluralSightApi api;
 
         public Downloader(DownloaderOptions options)
         {
+            if (options.Threads > 10) throw new InvalidOperationException();
+
             this.options = options;
             api = new PluralSightApi(options.Timeout);
+            queue = new TaskQueue(options.Threads);
+            queue.ProcessCompleteEvent += ClipDownloaded;
         }
 
         public async Task Download()
         {
             if (options.ListClip || options.ListModule)
                 Utils.WriteRedText("--list cannot be used with --clip or --module");
-            else if (options.DownloadClip)
-                await DownloadSingleClipAsync();
-            else if (options.DownloadModule)
-                await DownloadSingleModuleAsync();
-            else
-                await DownloadCompleteCourseAsync();
-        }
 
-        private async Task DownloadCompleteCourseAsync()
-        {
-            var course = await GetCourseAsync(options.CourseId, options.ListCourse);
-
-            Utils.WriteYellowText($"Downloading '{course.Header.Title}' started ...");
-
-            foreach (var (module, index) in course.Modules.WithIndex())
-                await GetModuleAsync(course.Header, module, index, options.ListCourse);
-
-            Utils.WriteYellowText($"Downloading '{course.Header.Title}' completed.");
-        }
-
-        private async Task DownloadSingleModuleAsync()
-        {
             var course = await GetCourseAsync(options.CourseId, list: false);
-            var (module, index) = course.Modules.WithIndex()
+            Utils.WriteYellowText($"Downloading from course'{course.Header.Title}' started ...");
+            Utils.WriteGreenText($"\tPreparing files for download ...");
+
+            if (options.DownloadClip)
+            {
+                var (clip, index, title) = course.GetClip(options.ClipId);
+                await GetClipAsync(clip, course.Header, index, title, list: false);
+            }
+            else if (options.DownloadModule)
+            {
+                var (module, index) = course.Modules.WithIndex()
                 .FirstOrDefault(i => i.item.Id == options.ModuleId);
 
-            Utils.WriteYellowText($"Downloading from course'{course.Header.Title}' started ...");
+                await GetModuleAsync(course.Header, module, index, list: false);
+            }
+            else
+            {
+                foreach (var (module, index) in course.Modules.WithIndex())
+                    await GetModuleAsync(course.Header, module, index, options.ListCourse);
+            }
 
-            await GetModuleAsync(course.Header, module, index, list: false);
+            Utils.WriteGreenText($"\tDownloading has started ...");
 
-            Utils.WriteYellowText($"Download complete");
-        }
-
-        private async Task DownloadSingleClipAsync()
-        {
-            var course = await GetCourseAsync(options.CourseId, list: false);
-            var (clip, index, title) = course.GetClip(options.ClipId);
-
-            Utils.WriteYellowText($"Downloading from course'{course.Header.Title}' started ...");
-            Utils.WriteGreenText($"\tDownloading from module {index}. {title}");
-
-            await GetClipAsync(clip, course.Header, index, title, list: false);
+            await queue.Execute();
 
             Utils.WriteYellowText($"Download complete");
         }
@@ -92,8 +82,11 @@ namespace PluralVideos.Download
             if (module == null)
                 throw new Exception("The module was not found. Check the module and Try again.");
 
-            Utils.WriteGreenText($"\t{index}. {module.Title}", newLine: !list);
-            if (list) Utils.WriteCyanText($"  --  {module.Id}");
+            if (list)
+            {
+                Utils.WriteGreenText($"\t{index}. {module.Title}", newLine: false);
+                Utils.WriteBlueText($"  --  {module.Id}");
+            }
 
             foreach (var clip in module.Clips)
                 await GetClipAsync(clip, course, index, module.Title, list);
@@ -104,9 +97,9 @@ namespace PluralVideos.Download
             if (clip == null)
                 throw new Exception("The clip was not found. Check the clip and Try again.");
 
-            Utils.WriteText($"\t\t{clip.Index}. {clip.Title}", newLine: false);
             if (list)
             {
+                Utils.WriteText($"\t\t{clip.Index}. {clip.Title}", newLine: false);
                 Utils.WriteCyanText($"  --  {clip.Id}");
                 return;
             }
@@ -118,26 +111,17 @@ namespace PluralVideos.Download
                 return;
             }
 
-            foreach (var (item, index) in response.Data.RankedOptions.WithIndex())
-            {
-                var file = await api.Download.Download(item.Url, options.OutputPath, course.Title, moduleId, moduleTitle, clip);
-                if (file.Success)
-                {
-                    var padding = index != 0 ? "\t\t  " : "  ";
-                    Utils.WriteBlueText($"{padding}--  completed");
-                    break;
-                }
-                else
-                {
-                    var newLine = index == 0 ? "\n" : "";
+            var client = new DownloadClient(response.Data, options.OutputPath, course.Title, moduleId, moduleTitle, clip, api.HttpClientFactoryInstance);
+            queue.Enqueue(client);
+        }
 
-                    if (index == response.Data.RankedOptions.Count - 1)
-                        Utils.WriteRedText($"\t\t  --  Download failed. To download this video run \n\t\t  '--out <Output Path> --course {course.Name} --clip {clip.Id}'");
-                    else
-                        Utils.WriteRedText($"{newLine}\t\t  --  Failed: Retry #{index + 1}");
-                    continue;
-                }
-            }
+        private void ClipDownloaded(object sender, DownloadEventArgs e)
+        {
+            Utils.WriteGreenText($"\n\t{e.ModuleId}. {e.ModuleTitle}");
+            if (e.Succeeded)
+                Utils.WriteText($"\t\t{e.ClipId}. {e.ClipTitle}  --  downloaded");
+            else
+                Utils.WriteRedText($"\t\t{e.ClipId}. {e.ClipTitle} --  Download failed. will retry again.");
         }
     }
 }

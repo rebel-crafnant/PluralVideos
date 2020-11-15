@@ -24,11 +24,6 @@ namespace PluralVideos.Download.Services
             return await SendHttp<T>(() => new HttpRequestMessage(HttpMethod.Get, $"{BaseUri}/{url}"));
         }
 
-        protected async Task<ApiFile> GetFile(string url)
-        {
-            return await SendHttpFile(() => new HttpRequestMessage(HttpMethod.Get, url));
-        }
-
         protected async Task<ApiResponse<T>> PostHttp<T>(string url, object data)
         {
             return await SendHttp<T>(() => new HttpRequestMessage(HttpMethod.Post, $"{BaseUri}/{url}")
@@ -40,6 +35,16 @@ namespace PluralVideos.Download.Services
         protected async Task<ApiResponse> DeleteHttp(string url)
         {
             return await SendHttp(() => new HttpRequestMessage(HttpMethod.Delete, $"{BaseUri}/{url}"));
+        }
+
+        protected async Task<ApiResponse> HeadHttp(string url)
+        {
+            return await SendHttp(() => new HttpRequestMessage(HttpMethod.Head, url));
+        }
+
+        protected async Task<ApiFile> GetFile(string url)
+        {
+            return await SendHttpFile(() => new HttpRequestMessage(HttpMethod.Get, url));
         }
 
         private async Task<ApiResponse> SendHttp(Func<HttpRequestMessage> requestFunc)
@@ -101,8 +106,10 @@ namespace PluralVideos.Download.Services
             try
             {
                 var request = requestFunc();
+                await SetAuthHeader(request, false);
 
                 var response = await httpClient.SendAsync(request);
+
                 return await ApiFile.FromMessage(response);
             }
             catch (Exception ex)
@@ -116,9 +123,12 @@ namespace PluralVideos.Download.Services
 
         private async Task SetAuthHeader(HttpRequestMessage message, bool renew)
         {
-            var token = await getAccessToken(renew);
-            if (!string.IsNullOrEmpty(token))
-                message.Headers.Add("ps-jwt", token);
+            if (getAccessToken != null)
+            {
+                var token = await getAccessToken(renew);
+                if (!string.IsNullOrEmpty(token))
+                    message.Headers.Add("ps-jwt", token);
+            }
         }
 
         private string GetRecursiveErrorMessage(Exception ex, string delimeter = " --- ")

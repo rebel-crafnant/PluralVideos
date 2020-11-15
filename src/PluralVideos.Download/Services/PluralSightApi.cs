@@ -2,6 +2,7 @@
 using PluralVideos.Download.Services.Auth;
 using PluralVideos.Download.Services.Video;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -17,9 +18,7 @@ namespace PluralVideos.Download.Services
 
         private AuthClient auth;
         private VideoClient video;
-        private DownloadClient download;
         
-
         public PluralSightApi(int timeout)
         {
             user = FileHelper.ReadUser();
@@ -28,7 +27,6 @@ namespace PluralVideos.Download.Services
 
         public AuthClient Auth => auth ??= new AuthClient(GetAccessToken, HttpClientFactoryInstance);
         public VideoClient Video => video ??= new VideoClient(GetAccessToken, HttpClientFactoryInstance);
-        public DownloadClient Download => download ??= new DownloadClient(GetAccessToken, HttpClientFactoryInstance);
 
         protected async Task<string> GetAccessToken(bool renew = false)
         {
@@ -48,7 +46,7 @@ namespace PluralVideos.Download.Services
             return user?.Jwt;
         }
 
-        protected HttpClient HttpClientFactoryInstance
+        public HttpClient HttpClientFactoryInstance
         {
             get
             {
@@ -60,6 +58,8 @@ namespace PluralVideos.Download.Services
                     };
                     httpClient.DefaultRequestHeaders.Add("User-Agent", "WPF/1.0.282");
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.DefaultConnectionLimit = 10;
                 }
 
                 return httpClient;

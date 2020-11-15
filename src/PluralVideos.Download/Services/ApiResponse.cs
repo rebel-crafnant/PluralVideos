@@ -84,7 +84,6 @@ namespace PluralVideos.Download.Services
             var response = new ApiFile
             {
                 Message = message,
-                ResponseBody = await message.Content.ReadAsStringAsync()
             };
 
             if (message.IsSuccessStatusCode)

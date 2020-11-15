@@ -23,6 +23,9 @@ namespace PluralVideos.Download.Options
         [Option("timeout", Default = 15, HelpText = "Timeout period for video download in seconds")]
         public int Timeout { get; set; }
 
+        [Option("threads", Default = 10, HelpText = "Number of threads to be used in download")]
+        public int Threads { get; set; }
+
         public bool ListClip
             => !string.IsNullOrEmpty(ClipId) && ListCourse;
 
