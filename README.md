@@ -11,14 +11,13 @@ Command line tools for decrypting Pluralsight videos downloaded from the Plurals
 
 ## Usage
 
-### PluralVideos
+### PluralVideos.Download
 This tool can download courses that you are subscribed to in Pluralsight. To download you need to login using `downloadvideos auth --login`
 
 ### Verbs
 ```diff
   auth        Authenticates the app to pluralsight
   download    Downloads courses from pluralsight
-  decrypt     Decrypt videos dowloaded by pluralsight app
 ```
 
 #### Auth Options
@@ -36,6 +35,7 @@ You can only download videos that your subscription allows
   --clip       Video clip to download
   --list       List course without downloading
   --timeout    (Default: 15) Timeout period for video download in seconds
+  --threads    (Default: 10) Number of threads to be used in download
 ```
  
 The `--course` flag is the string on the url table of content. The Url ***/library/courses/linq-fundamentals-csharp-6/table-of-contents*** the course flag would be ***linq-fundamentals-csharp-6***
@@ -61,7 +61,7 @@ DownloadVideos download --out <OutputPath> --course linq-fundamentals-csharp-6 -
 DownloadVideos download --out <OutputPath> --course linq-fundamentals-csharp-6 --module 97619f0d-5618-4a53-8dc8-08fa981883fc
 ```
 	
-### Decrypt options
+### PluralVideos.Decrypt
 Decrypts video already downloaded by pluralsight app
 ```diff
 Flags
