@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "PluralVideos.Download": {
-      "commandName": "Project",
-      "commandLineArgs": "download --out \"C:\\Users\\Dodoma\\Desktop\\Trialss\" --course sharepoint-2013-core-solutions-pt1 --timeout 30"
-    }
-  }
-}

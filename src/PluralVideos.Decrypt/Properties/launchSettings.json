@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "PluralVideos.Decrypt": {
-      "commandName": "Project",
-      "commandLineArgs": "--out \"C:\\Users\\Murage\\Desktop\\Pluralsight\""
-    }
-  }
-}
