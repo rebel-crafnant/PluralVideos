@@ -12,13 +12,13 @@ Command line tools for decrypting Pluralsight videos downloaded from the Plurals
 ## Usage
 
 ### PluralVideos
-This tool can download courses that you are subscribed to in Pluralsight. To download you need to login using `downloadvideos auth --login`
+This tool can decrypts and downloads courses that you are subscribed to in Pluralsight. To download you need to login using `pluralvideos auth --login`
 
 ### Verbs
 ```diff
   auth        Authenticates the app to pluralsight
   download    Downloads courses from pluralsight
-  decrypt     Decrypts videps downloaded by pluralsight app
+  decrypt     Decrypts videos downloaded by pluralsight app
 ```
 
 #### Auth Options
@@ -46,19 +46,19 @@ To download a module or a single video you need to get the course id or the clip
 
 - ***List course content***
 ```diff
-DownloadVideos download --out <OutputPath> --course linq-fundamentals-csharp-6 --list
+pluralvideos download --out <outputPath> --course linq-fundamentals-csharp-6 --list
 ```
 - ***Download a full course***
 ```diff
-DownloadVideos download --out <OutputPath> --course linq-fundamentals-csharp-6
+pluralvideos download --out <outputPath> --course linq-fundamentals-csharp-6
 ```
 - ***Download a single video***
 ```diff
-DownloadVideos download --out <OutputPath> --course linq-fundamentals-csharp-6 --clip 97619f0d-5618-4a53-8dc8-08fa981883fc
+pluralvideos download --out <outputPath> --course linq-fundamentals-csharp-6 --clip 97619f0d-5618-4a53-8dc8-08fa981883fc
 ```
 - ***Download a single module***
 ```diff
-DownloadVideos download --out <OutputPath> --course linq-fundamentals-csharp-6 --module 97619f0d-5618-4a53-8dc8-08fa981883fc
+pluralvideos download --out <outputPath> --course linq-fundamentals-csharp-6 --module 97619f0d-5618-4a53-8dc8-08fa981883fc
 ```
 	
 ### Decrypt options
@@ -80,7 +80,7 @@ To remove videos after decrypting use `--rm` flag. To include transcript use `--
 
 - ***Decrypt videos from the default location with transcript***
 ```diff
-DecryptVideos --out <OutputPath> --trans
+pluralvideos --out <outputPath> --trans
 ```
 
 **Notes:**
