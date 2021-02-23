@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Authors>Dodoma</Authors>
+    <Description>Library to download videos from Pluralsight.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/dodoma700/PluralVideos</RepositoryUrl>
+    <PackageTags>pluralsight, download</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PluralVideos.Data\PluralVideos.Data.csproj" />
+  </ItemGroup>
+
+</Project>

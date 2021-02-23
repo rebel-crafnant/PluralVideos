@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <Version>1.0.5</Version>
+    <PackageId>PluralVideos</PackageId>
+    <Authors>Dodoma</Authors>
+    <Product>PluralVideos</Product>
+    <Description>App that Downloads and Decrypts courses from Pluralsight</Description>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageIcon>Icon.ico</PackageIcon>
+    <AssemblyName>PluralVideos</AssemblyName>
+    <RootNamespace>PluralVideos</RootNamespace>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <RepositoryUrl>https://github.com/dodoma700/PluralVideos</RepositoryUrl>
+    <Copyright></Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>pluralsight, decrypt, download</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Goblinfactory.Konsole" Version="6.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Icon.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PluralVideos.Decrypt\PluralVideos.Decrypt.csproj" />
+    <ProjectReference Include="..\..\src\PluralVideos.Download\PluralVideos.Download.csproj" />
+  </ItemGroup>
+
+</Project>
