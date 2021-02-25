@@ -28,8 +28,6 @@ namespace PluralVideos.Download
             if (user == null)
                 return false;
 
-            user.IsLocal = true;
-
             uow.Users.Add(user);
             await uow.CompleteAsync();
 
@@ -70,31 +68,15 @@ namespace PluralVideos.Download
             return response;
         }
 
-        public async Task<ApiResponse> Logout()
+        public async Task<bool> Logout()
         {
             if (deviceInfo == null)
-            {
-                return new ApiResponse
-                {
-                    Error = new ApiError { Message = "You are not logged in." }
-                };
-            }
+                return false;
 
-            var user = await uow.Users.GetUserAsync();
-            if (user.IsLocal)
-            {
-                await uow.Users.DeleteUserAsync();
-                await uow.CompleteAsync();
-                return new ApiResponse();
-            }
-
-            var response = await api.Auth.LogoutAsync(deviceInfo.DeviceId);
-            if (response.Success)
-            {
-                await uow.Users.DeleteUserAsync();
-                await uow.CompleteAsync();
-            }
-            return response;
+            await uow.Users.DeleteUserAsync();
+            await uow.CompleteAsync();
+            await api.Auth.LogoutAsync(deviceInfo.DeviceId);
+            return true;
         }
     }
 }

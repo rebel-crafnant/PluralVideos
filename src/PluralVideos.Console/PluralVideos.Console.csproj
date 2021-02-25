@@ -9,13 +9,11 @@
     <Authors>Dodoma</Authors>
     <Product>PluralVideos</Product>
     <Description>App that Downloads and Decrypts courses from Pluralsight</Description>
-    <PackageReleaseNotes></PackageReleaseNotes>
     <PackageIcon>Icon.ico</PackageIcon>
     <AssemblyName>PluralVideos</AssemblyName>
     <RootNamespace>PluralVideos</RootNamespace>
     <NoWin32Manifest>true</NoWin32Manifest>
     <RepositoryUrl>https://github.com/dodoma700/PluralVideos</RepositoryUrl>
-    <Copyright></Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>pluralsight, decrypt, download</PackageTags>
   </PropertyGroup>

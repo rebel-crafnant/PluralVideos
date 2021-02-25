@@ -112,11 +112,10 @@ namespace PluralVideos
 
         private async Task LogoutAsync()
         {
-            var response = await manager.Logout();
-            if (response.Success)
+            if (await manager.Logout())
                 Utils.WriteGreenText("Logged out successfully");
             else
-                Utils.WriteRedText($"Could not log out . Error: {response.Error.Message}");
+                Utils.WriteRedText($"You are not logged in.");
         }
 
         private async Task Authorize()

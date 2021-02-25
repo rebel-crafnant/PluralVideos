@@ -171,9 +171,6 @@ namespace PluralVideos.Data.Migrations
                     b.Property<string>("DeviceId")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsLocal")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTimeOffset>("JwtExpiration")
                         .HasColumnType("TEXT");
 
