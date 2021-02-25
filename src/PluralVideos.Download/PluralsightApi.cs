@@ -1,5 +1,6 @@
 ﻿using PluralVideos.Data.Models;
 using PluralVideos.Download.Clients;
+using PluralVideos.Download.Resources;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -28,12 +29,9 @@ namespace PluralVideos.Download
 
         public async Task<string> GetAccessTokenAsync(bool renew = false)
         {
-            //if (user == null)
-            //    return null;
-
             if (user?.JwtExpiration <= DateTimeOffset.UtcNow.AddDays(1.0) || renew)
             {
-                var response = await Auth.AuthorizeAsync(new(user.DeviceId, user.RefreshToken));
+                var response = await Auth.AuthorizeAsync(new DeviceInfoResource { DeviceId = user.DeviceId, RefreshToken = user.RefreshToken });
                 user = response.Success ? response.Data.ToUser() : null;
             }
 

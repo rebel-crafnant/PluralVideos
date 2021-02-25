@@ -13,5 +13,7 @@ namespace PluralVideos.Data.Models
         public DateTimeOffset JwtExpiration { get; set; }
 
         public string UserHandle { get; set; }
+
+        public bool IsLocal { get; set; }
     }
 }

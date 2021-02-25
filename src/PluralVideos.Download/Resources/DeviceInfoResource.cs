@@ -1,4 +1,13 @@
-﻿namespace PluralVideos.Download.Resources
+﻿using System.Text.Json.Serialization;
+
+namespace PluralVideos.Download.Resources
 {
-    public record DeviceInfoResource(string DeviceId, string RefreshToken);
+    public class DeviceInfoResource
+    {
+        [JsonPropertyName("deviceId")]
+        public string DeviceId { get; set; }
+
+        [JsonPropertyName("refreshToken")]
+        public string RefreshToken { get; set; }
+    }
 }

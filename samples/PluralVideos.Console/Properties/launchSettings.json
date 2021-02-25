@@ -2,7 +2,7 @@
   "profiles": {
     "PluralVideos.Console": {
       "commandName": "Project",
-      "commandLineArgs": "auth --login "
+      "commandLineArgs": "decrypt"
     }
   }
 }

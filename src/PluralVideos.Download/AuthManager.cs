@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 
 namespace PluralVideos.Download
 {
-    public class AuthenticationManager
+    public class AuthManager
     {
         private readonly PluralsightApi api;
         private readonly UnitOfWork<PluralVideosContext> uow = new(new PluralVideosContext());
         private DeviceInfoResource deviceInfo;
 
-        public AuthenticationManager()
+        public AuthManager()
         {
             var user = uow.Users.GetUserAsync().Result;
             api = new(15, user);
-            deviceInfo = user == null ? null : new(user.DeviceId, user.RefreshToken);
+            deviceInfo = user == null ? null : new DeviceInfoResource { DeviceId = user.DeviceId, RefreshToken = user.RefreshToken };
         }
 
         public async Task<bool> IsLoggedIn() 
@@ -23,10 +23,12 @@ namespace PluralVideos.Download
 
         public async Task<bool> LocalAuthenticate()
         {
-            var work = new UnitOfWork<PluralsightContext>(new PluralsightContext());
+            using var work = new UnitOfWork<PluralsightContext>(new PluralsightContext());
             var user = await work.Users.GetUserAsync();
             if (user == null)
                 return false;
+
+            user.IsLocal = true;
 
             uow.Users.Add(user);
             await uow.CompleteAsync();
@@ -38,7 +40,16 @@ namespace PluralVideos.Download
         {
             var response = await api.Auth.AutheticateAsync();
             if (response.Success)
-                deviceInfo = new(response.Data.DeviceId, response.Data.RefreshToken);
+                deviceInfo = new DeviceInfoResource { DeviceId = response.Data.DeviceId, RefreshToken = response.Data.RefreshToken };
+
+            return response;
+        }
+
+        public async Task<ApiResponse<DeviceInfoResource>> Authenticate(string username, string password)
+        {
+            var response = await api.Auth.AutheticateAsync(username, password);
+            if (response.Success)
+                deviceInfo = new DeviceInfoResource { DeviceId = response.Data.DeviceId, RefreshToken = response.Data.RefreshToken };
 
             return response;
         }
@@ -68,7 +79,15 @@ namespace PluralVideos.Download
                     Error = new ApiError { Message = "You are not logged in." }
                 };
             }
-                
+
+            var user = await uow.Users.GetUserAsync();
+            if (user.IsLocal)
+            {
+                await uow.Users.DeleteUserAsync();
+                await uow.CompleteAsync();
+                return new ApiResponse();
+            }
+
             var response = await api.Auth.LogoutAsync(deviceInfo.DeviceId);
             if (response.Success)
             {
