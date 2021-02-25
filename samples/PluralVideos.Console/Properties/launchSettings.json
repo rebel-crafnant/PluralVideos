@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "PluralVideos.Console": {
-      "commandName": "Project",
-      "commandLineArgs": "decrypt"
-    }
-  }
-}

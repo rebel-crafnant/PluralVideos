@@ -33,10 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\PluralVideos.Decrypt\PluralVideos.Decrypt.csproj" />
     <ProjectReference Include="..\..\src\PluralVideos.Download\PluralVideos.Download.csproj" />
   </ItemGroup>
