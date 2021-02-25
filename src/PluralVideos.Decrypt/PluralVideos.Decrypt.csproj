@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Authors>Dodoma</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Library to be used to decrypt pluralsight videos from Offline Player</Description>
+    <RepositoryUrl>https://github.com/dodoma700/PluralVideos</RepositoryUrl>
+    <PackageTags>pluralsight, decrypt</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PluralVideos.Data\PluralVideos.Data.csproj" />
+  </ItemGroup>
+
+</Project>

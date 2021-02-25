@@ -4,7 +4,7 @@ Command line tools for decrypting Pluralsight videos downloaded from the Plurals
 
 ## Prerequisites
 
-- This tools requires .Net Core 3.1
+- This tools requires .Net 5
 
 ## Installing
 - Download the latest binary from [here](https://github.com/dodoma700/PluralVideos/releases).
@@ -12,7 +12,7 @@ Command line tools for decrypting Pluralsight videos downloaded from the Plurals
 ## Usage
 
 ### PluralVideos
-This tool can decrypts and downloads courses that you are subscribed to in Pluralsight. To download you need to login using `pluralvideos auth --login`
+This tool can decrypts and downloads courses that you are subscribed to in Pluralsight. To download you need to login usin the `auth` verb.
 
 ### Verbs
 ```diff
@@ -22,18 +22,44 @@ This tool can decrypts and downloads courses that you are subscribed to in Plura
 ```
 
 #### Auth Options
+Authentication tokens from pluralsight are cached in the database.
 ```diff
-  --login      Login the App to Pluralsight
-  --logout     Logout the App from Pluralsight
+  --local-login     Use Offline Pluralsight credentials
+  --login           Login the App to Pluralsight
+  -u, --username    Pluralsight username
+  -p, --password    Pluralsight password
+  --logout          Logout the App from Pluralsight
+```
+**Examples:**
+
+- ***Login using the offline pluralsight apps credentials***
+```diff
+pluralvideos auth --login-local
+```
+
+- ***Login using username and password***
+```diff
+pluralvideos auth --login -u <Username> -p <Password>
+```
+
+- ***Login using company account (default)***
+```diff
+pluralvideos auth --login
+```
+
+- ***Logout from the app***
+```diff
+pluralvideos auth --logout
 ```
 
 #### Download Options
-You can only download videos that your subscription allows
+You can only download videos that your subscription allows. The course info is only downloaded once. If the video has been downloaded before the video will not be downloaded again unless you use the options `--force`
  ```diff
   --out        Required. Output folder path
   --course     Required. Course to download
   --module     Video clip to download
   --clip       Video clip to download
+  --force      Force downloaded videos to redownload
   --list       List course without downloading
   --timeout    (Default: 15) Timeout period for video download in seconds
 ```
@@ -70,7 +96,6 @@ Flags
 	--course     Course folder path
 	--trans      Create subtitle file along with the video
 	--rm         Remove encrypted folder after decryption
-	--help       Display this help screen.
 ```
 The database flag `--db` defaults to the default location where the pluralsight store the video so is the courses folder `--course`.
 
