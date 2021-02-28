@@ -49,8 +49,8 @@ namespace PluralVideos.Data.Persistence
 
         private static string RemoveInvalidCharacter(this string value)
         {
-            var illegal = Regex.Escape(new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars()));
-            var join = $"[{illegal}]";
+            var illegal = Path.GetInvalidPathChars();
+            var join = $"[{string.Join("", illegal)}]";
             var illegalInFileName = new Regex(join);
             return illegalInFileName.Replace(value.Trim(), "");
         }
